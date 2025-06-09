@@ -35,14 +35,16 @@ public class WebSecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
 			.csrf(csrf -> csrf.disable())
-			// 요청에 대한 접근 권한을 설정합니다.
+			.headers(headers ->
+				headers.frameOptions(frame -> frame.disable())  // H2 콘솔이 iframe으로 뜰 수 있게
+			)
 			.authorizeHttpRequests(authorize -> authorize
-				.requestMatchers("/api/**").permitAll()
-				// 그 외의 모든 요청은 인증이 필요합니다.
+				.requestMatchers("/h2-console/**").permitAll()  // H2 콘솔 허용
+				.requestMatchers("/api/**").permitAll()         // 기존 API 허용
 				.anyRequest().authenticated()
 			)
-			.sessionManagement(session -> session
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			.sessionManagement(session ->
+				session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			);
 
 
