@@ -46,4 +46,8 @@ public class User {
 	public void update(UserUpdateRequest userUpdateRequest) {
 		this.nickName = userUpdateRequest.getNickName();
 	}
+
+	public void updateUserRole() {
+		this.userRole = UserRole.ADMIN;
+	}
 }
