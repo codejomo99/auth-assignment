@@ -53,8 +53,11 @@ public class WebSecurityConfig {
 				headers.frameOptions(frame -> frame.disable())  // H2 콘솔이 iframe으로 뜰 수 있게
 			)
 			.authorizeHttpRequests(authorize -> authorize
-				.requestMatchers("/h2-console/**").permitAll()  // H2 콘솔 허용
-				.requestMatchers("/api/**").permitAll()         // 기존 API 허용
+				.requestMatchers(
+					"/h2-console/**",
+					"/api/users/sign-up",
+					"/api/users/login"
+				).permitAll()  // H2 콘솔 허용// 기존 API 허용
 				.anyRequest().authenticated()
 			)
 			.sessionManagement(session ->
