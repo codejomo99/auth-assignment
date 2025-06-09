@@ -1,5 +1,7 @@
 package com.sparta.authassignment.user.entity;
 
+import com.sparta.authassignment.user.dto.UserUpdateRequest;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -35,4 +37,8 @@ public class User {
 	@Builder.Default
 	@Enumerated(EnumType.STRING)
 	private UserRole userRole = UserRole.USER;
+
+	public void update(UserUpdateRequest userUpdateRequest) {
+		this.nickName = userUpdateRequest.getNickName();
+	}
 }
