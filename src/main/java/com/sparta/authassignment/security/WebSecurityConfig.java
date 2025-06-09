@@ -55,8 +55,8 @@ public class WebSecurityConfig {
 			.authorizeHttpRequests(authorize -> authorize
 				.requestMatchers(
 					"/h2-console/**",
-					"/api/users/sign-up",
-					"/api/users/login"
+					"/signup",
+					"/login"
 				).permitAll()  // H2 콘솔 허용// 기존 API 허용
 				.anyRequest().authenticated()
 			)

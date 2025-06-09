@@ -49,7 +49,7 @@ class UserControllerTest {
 		String json = objectMapper.writeValueAsString(request);
 
 		// when-then
-		mockMvc.perform(post("/api/users/sign-up")
+		mockMvc.perform(post("/signup")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(json))
 			.andExpect(status().isCreated());  // 201
@@ -63,7 +63,7 @@ class UserControllerTest {
 		String json = objectMapper.writeValueAsString(request);
 
 		// when-the
-		mockMvc.perform(post("/api/users/sign-up")
+		mockMvc.perform(post("/signup")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(json))
 			.andExpect(status().isCreated());  // 201
@@ -78,7 +78,7 @@ class UserControllerTest {
 		String json = objectMapper.writeValueAsString(request);
 
 		// when-then
-		mockMvc.perform(post("/api/users/sign-up")
+		mockMvc.perform(post("/signup")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(json))
 			.andExpect(status().isForbidden());
@@ -88,7 +88,7 @@ class UserControllerTest {
 	@DisplayName("로그인 성공 시 200 OK, Authorization 헤더에 JWT 토큰이 담겨옵니다")
 	void login_Success_ReturnsToken() throws Exception {
 		// 먼저 회원가입
-		mockMvc.perform(post("/api/users/sign-up")
+		mockMvc.perform(post("/signup")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(
 					new UserSignUpRequest("test@test.com", "nickname", "1234",null)
@@ -99,7 +99,7 @@ class UserControllerTest {
 		UserLoginRequest loginDto = new UserLoginRequest("test@test.com", "1234");
 		String loginBody = objectMapper.writeValueAsString(loginDto);
 
-		mockMvc.perform(post("/api/users/login")
+		mockMvc.perform(post("/login")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(loginBody))
 			.andExpect(status().isOk())
@@ -111,7 +111,7 @@ class UserControllerTest {
 	@DisplayName("로그인 실패 시 INVALID_CREDENTIALS 에러 응답 반환")
 	void login_Fail_InvalidCredentials() throws Exception {
 		// 회원가입
-		mockMvc.perform(post("/api/users/sign-up")
+		mockMvc.perform(post("/signup")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(
 					new UserSignUpRequest("test@test.com", "nickname", "1234",null)
@@ -122,7 +122,7 @@ class UserControllerTest {
 		UserLoginRequest wrongLogin = new UserLoginRequest("test@test.com", "1235");
 		String wrongJson = objectMapper.writeValueAsString(wrongLogin);
 
-		mockMvc.perform(post("/api/users/login")
+		mockMvc.perform(post("/login")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(wrongJson))
 			.andExpect(status().isUnauthorized())

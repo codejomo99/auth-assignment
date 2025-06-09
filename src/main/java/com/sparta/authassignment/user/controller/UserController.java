@@ -25,12 +25,11 @@ import com.sparta.authassignment.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
 	private final UserService userService;
 
-	@PostMapping("/sign-up")
+	@PostMapping("/signup")
 	public ResponseEntity<Void> signUp(
 		@RequestBody UserSignUpRequest requestDto
 	) {
