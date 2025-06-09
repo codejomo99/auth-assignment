@@ -41,9 +41,6 @@ class AdminControllerTest {
     private AdminService adminService;
 
     @Autowired
-    private JwtUtil jwtUtil;
-
-    @Autowired
     private ObjectMapper objectMapper;
 
     @Autowired
@@ -149,4 +146,38 @@ class AdminControllerTest {
             .andExpect(jsonPath("$.error.message").value(CommonErrorCode.ACCESS_DENIED.getMessage()));
 
     }
+
+    @Test
+    @DisplayName("실패 - 잘못된 토큰")
+    void patchRole_invalidToken() throws Exception {
+        // given
+        User user = userRepository.findAll().get(0);
+        Long userId = user.getId();
+
+        String loginRequestJson = objectMapper.writeValueAsString(Map.of(
+            "email", "admin@example.com",
+            "password", "1234"
+        ));
+
+        MvcResult loginResult = mockMvc.perform(post("/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(loginRequestJson))
+            .andExpect(status().isOk())
+            .andReturn();
+
+        String token = JsonPath.read(loginResult.getResponse().getContentAsString(), "$.accessToken");
+
+        // mock 응답 설정
+        AdminRolePatchResponse mockResponse = new AdminRolePatchResponse(user);
+        Mockito.when(adminService.patchRole(userId)).thenReturn(mockResponse);
+
+        // when & then
+        mockMvc.perform(patch("/admin/users/{id}/roles", userId)
+                .header(HttpHeaders.AUTHORIZATION, token + "xxx"))
+            .andExpect(status().isUnauthorized())
+            .andExpect(jsonPath("$.error.code").value(CommonErrorCode.JWT_INVALID.getErrorCode()))
+            .andExpect(jsonPath("$.error.message").value(CommonErrorCode.JWT_INVALID.getMessage()));
+    }
+
+
 }
