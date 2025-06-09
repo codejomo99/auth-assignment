@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -20,13 +20,14 @@ import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
 
 	private final JwtUtil jwtUtil;
 	private final UserDetailsServiceImpl userDetailsService;
+	private final CustomAccessDeniedHandler accessDeniedHandler;
 
 
 	@Bean
@@ -57,12 +58,17 @@ public class WebSecurityConfig {
 					"/h2-console/**",
 					"/signup",
 					"/login"
-				).permitAll()  // H2 콘솔 허용// 기존 API 허용
+				).permitAll()
+				.requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
 				.anyRequest().authenticated()
 			)
 			.sessionManagement(session ->
 				session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-			);
+			)
+			.exceptionHandling(exception -> exception
+				.accessDeniedHandler(accessDeniedHandler)
+			)
+		;
 
 		http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
 
