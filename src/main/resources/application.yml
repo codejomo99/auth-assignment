@@ -24,3 +24,8 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+
+admin:
+  signup:
+    secret-key: ${ADMIN_SIGNUP_SECRET}
