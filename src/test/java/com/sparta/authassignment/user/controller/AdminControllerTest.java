@@ -179,5 +179,19 @@ class AdminControllerTest {
             .andExpect(jsonPath("$.error.message").value(CommonErrorCode.JWT_INVALID.getMessage()));
     }
 
+    @Test
+    @DisplayName("실패 - 토큰없음")
+    void patchRole_missingToken() throws Exception {
+        // given
+        User user = userRepository.findAll().get(0);
+        Long userId = user.getId();
+
+        // when & then
+        mockMvc.perform(patch("/admin/users/{id}/roles", userId))
+            .andExpect(status().isUnauthorized())
+            .andExpect(jsonPath("$.error.code").value(CommonErrorCode.JWT_MISSING.getErrorCode()))
+            .andExpect(jsonPath("$.error.message").value(CommonErrorCode.JWT_MISSING.getMessage()));
+    }
+
 
 }
