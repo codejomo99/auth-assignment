@@ -1,35 +1,34 @@
 package com.sparta.authassignment.user.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sparta.authassignment.common.exception.CommonErrorCode;
-import com.sparta.authassignment.user.entity.User;
-import com.sparta.authassignment.user.entity.UserRole;
-import com.sparta.authassignment.security.jwt.JwtUtil;
-import com.sparta.authassignment.user.dto.AdminRolePatchResponse;
-import com.sparta.authassignment.user.service.AdminService;
-import com.sparta.authassignment.user.repository.UserRepository;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.Map;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-
-import org.mockito.Mockito;
-import org.springframework.context.ApplicationContext;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import com.jayway.jsonpath.JsonPath;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
-import java.util.Map;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
+import com.sparta.authassignment.common.exception.CommonErrorCode;
+import com.sparta.authassignment.security.jwt.JwtUtil;
+import com.sparta.authassignment.user.dto.AdminRolePatchResponse;
+import com.sparta.authassignment.user.entity.User;
+import com.sparta.authassignment.user.entity.UserRole;
+import com.sparta.authassignment.user.repository.UserRepository;
+import com.sparta.authassignment.user.service.AdminService;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -50,6 +49,8 @@ class AdminControllerTest {
     private ApplicationContext applicationContext;
     @Autowired
     private PasswordEncoder passwordEncoder;
+	@Autowired
+	private JwtUtil jwtUtil;
 
     @BeforeEach
     void setup() throws Exception {
@@ -193,5 +194,26 @@ class AdminControllerTest {
             .andExpect(jsonPath("$.error.message").value(CommonErrorCode.JWT_MISSING.getMessage()));
     }
 
+    @Test
+    @DisplayName("실패 - 만료된 토큰")
+    @WithMockUser(username = "user", authorities = {"ROLE_USER"})
+    void patchRole_expiredToken() throws Exception {
+
+        User user = userRepository.findAll().get(0);
+        Long userId = user.getId();
+        String expiredToken = jwtUtil.createExpiredToken(user.getEmail());
+
+        // mock 응답 설정
+        AdminRolePatchResponse mockResponse = new AdminRolePatchResponse(user);
+        Mockito.when(adminService.patchRole(userId)).thenReturn(mockResponse);
+
+        // when & then
+        mockMvc.perform(patch("/admin/users/{id}/roles", userId)
+                .header(HttpHeaders.AUTHORIZATION,"Bearer " + expiredToken))
+            .andExpect(status().isUnauthorized())
+            .andExpect(jsonPath("$.error.code").value(CommonErrorCode.JWT_EXPIRED.getErrorCode()))
+            .andExpect(jsonPath("$.error.message").value(CommonErrorCode.JWT_EXPIRED.getMessage()));
+
+    }
 
 }
