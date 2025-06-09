@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.http.MediaType;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sparta.authassignment.common.exception.CommonErrorCode;
 import com.sparta.authassignment.user.dto.UserLoginRequest;
 import com.sparta.authassignment.user.dto.UserSignUpRequest;
 import com.sparta.authassignment.user.repository.UserRepository;
@@ -73,5 +74,29 @@ class UserControllerTest {
 			.andExpect(header().exists("Authorization"))
 			.andExpect(jsonPath("$.accessToken").isNotEmpty());
 	}
+
+	@Test
+	@DisplayName("로그인 실패 시 INVALID_CREDENTIALS 에러 응답 반환")
+	void login_Fail_InvalidCredentials() throws Exception {
+		// 회원가입
+		mockMvc.perform(post("/api/users/sign-up")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(
+					new UserSignUpRequest("test@test.com", "nickname", "1234")
+				)))
+			.andExpect(status().isCreated());
+
+		// 잘못된 비밀번호로 로그인 시도
+		UserLoginRequest wrongLogin = new UserLoginRequest("test@test.com", "1235");
+		String wrongJson = objectMapper.writeValueAsString(wrongLogin);
+
+		mockMvc.perform(post("/api/users/login")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(wrongJson))
+			.andExpect(status().isUnauthorized())
+			.andExpect(jsonPath("$.error.code").value(CommonErrorCode.INVALID_CREDENTIALS.getErrorCode()))
+			.andExpect(jsonPath("$.error.message").value(CommonErrorCode.INVALID_CREDENTIALS.getMessage()));
+	}
+
 
 }
