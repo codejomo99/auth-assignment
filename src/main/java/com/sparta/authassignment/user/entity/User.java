@@ -28,6 +28,9 @@ public class User {
 	Long id;
 
 	@Column(nullable = false)
+	private String username;
+
+	@Column(nullable = false)
 	private String nickName;
 
 	@Column(name = "password", nullable = false)

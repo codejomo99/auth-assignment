@@ -20,7 +20,6 @@ import com.sparta.authassignment.user.dto.UserLoginRequest;
 import com.sparta.authassignment.user.dto.UserSignUpRequest;
 import com.sparta.authassignment.user.repository.UserRepository;
 
-
 @SpringBootTest
 @AutoConfigureMockMvc
 class UserControllerTest {
@@ -45,7 +44,8 @@ class UserControllerTest {
 	@DisplayName("유저 회원가입이 성공했습니다.")
 	void signUp_User_Success() throws Exception {
 		// given
-		UserSignUpRequest request = new UserSignUpRequest("test@test.com", "nickname", "nickname",adminSecretKey);
+		UserSignUpRequest request = new UserSignUpRequest("test@test.com", "username", "nickname", "1234",
+			adminSecretKey);
 		String json = objectMapper.writeValueAsString(request);
 
 		// when-then
@@ -59,7 +59,7 @@ class UserControllerTest {
 	@DisplayName("관리자 회원가입이 성공했습니다.")
 	void signUp_Admin_Fail() throws Exception {
 		// given
-		UserSignUpRequest request = new UserSignUpRequest("test@test.com", "nickname", "nickname",null);
+		UserSignUpRequest request = new UserSignUpRequest("test@test.com", "username", "nickname", "1234", adminSecretKey);
 		String json = objectMapper.writeValueAsString(request);
 
 		// when-the
@@ -74,7 +74,8 @@ class UserControllerTest {
 	void signUp_Admin_Success() throws Exception {
 
 		// given
-		UserSignUpRequest request = new UserSignUpRequest("test@test.com", "nickname", "nickname","secretKey");
+		UserSignUpRequest request = new UserSignUpRequest("test@test.com", "username", "nickname", "1234",
+			"secretKey");
 		String json = objectMapper.writeValueAsString(request);
 
 		// when-then
@@ -91,7 +92,7 @@ class UserControllerTest {
 		mockMvc.perform(post("/signup")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(
-					new UserSignUpRequest("test@test.com", "nickname", "1234",null)
+					new UserSignUpRequest("test@test.com", "username", "nickname", "1234", null)
 				)))
 			.andExpect(status().isCreated());
 
@@ -114,7 +115,7 @@ class UserControllerTest {
 		mockMvc.perform(post("/signup")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(
-					new UserSignUpRequest("test@test.com", "nickname", "1234",null)
+					new UserSignUpRequest("test@test.com", "username", "nickname", "1234", null)
 				)))
 			.andExpect(status().isCreated());
 
@@ -129,6 +130,5 @@ class UserControllerTest {
 			.andExpect(jsonPath("$.error.code").value(CommonErrorCode.INVALID_CREDENTIALS.getErrorCode()))
 			.andExpect(jsonPath("$.error.message").value(CommonErrorCode.INVALID_CREDENTIALS.getMessage()));
 	}
-
 
 }
