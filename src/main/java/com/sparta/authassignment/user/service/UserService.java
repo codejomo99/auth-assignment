@@ -1,5 +1,6 @@
 package com.sparta.authassignment.user.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserService {
 	private final UserRepository userRepository;
+	private final PasswordEncoder passwordEncoder;
 
 	public void signUp(SignUpRequestDto requestDto) {
 
@@ -23,10 +25,11 @@ public class UserService {
 			throw new BaseException(CommonErrorCode.USER_ALREADY_EXISTS);
 		}
 
-		//TODO: 암호화 할 예정
+		String passwordEncode = passwordEncoder.encode(requestDto.getPassword());
+
 		userRepository.save(User.builder()
 			.email(requestDto.getEmail())
-			.password(requestDto.getPassword())
+			.password(passwordEncode)
 			.nickName(requestDto.getNickName())
 			.build());
 	}
