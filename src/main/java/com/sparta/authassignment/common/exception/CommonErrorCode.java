@@ -20,17 +20,17 @@ public enum CommonErrorCode implements BaseErrorCode {
 	UNAUTHORIZED("UNAUTHORIZED", "로그인이 필요한 요청입니다. 인증에 실패했습니다.", HttpStatus.UNAUTHORIZED),
 
 	// 추가된 JWT 관련 에러들
-	JWT_MISSING("JWT_MISSING", "JWT 토큰이 존재하지 않습니다.", HttpStatus.UNAUTHORIZED),
-	JWT_INVALID("JWT_INVALID", "유효하지 않은 인증 토큰입니다.", HttpStatus.UNAUTHORIZED),
+	JWT_MISSING("MISSING_TOKEN", "JWT 토큰이 존재하지 않습니다.", HttpStatus.UNAUTHORIZED),
+	JWT_INVALID("INVALID_TOKEN", "유효하지 않은 인증 토큰입니다.", HttpStatus.UNAUTHORIZED),
 	JWT_AUTHENTICATION_FAILED("JWT_AUTHENTICATION_FAILED", "JWT 인증에 실패했습니다.", HttpStatus.UNAUTHORIZED),
 
 	// 인증은 되었지만 권한이 없는 경우
 	ACCESS_DENIED("ACCESS_DENIED", "접근 권한이 없습니다.", HttpStatus.FORBIDDEN),
 
 	// 관리자 가입 실패
-	ACCESS_DENIED_ADMIN("ACCESS_DENIED_ADMIN","관리자 가입에 실패했습니다.", HttpStatus.FORBIDDEN)
+	ACCESS_DENIED_ADMIN("ACCESS_DENIED_ADMIN","관리자 가입에 실패했습니다.", HttpStatus.FORBIDDEN),
 
-	;
+	JWT_EXPIRED("EXPIRED_TOKEN", "JWT 토큰 만료됨", HttpStatus.UNAUTHORIZED);
 
 	private final String errorCode;
 	private final String message;

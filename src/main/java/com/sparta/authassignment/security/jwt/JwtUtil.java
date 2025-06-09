@@ -108,5 +108,33 @@ public class JwtUtil {
 	public Claims getUserInfoFromToken(String token) {
 		return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
 	}
+
+	// 만료 검사
+	public boolean isTokenExpired(String token) {
+		try {
+			Date expiration = Jwts.parserBuilder()
+				.setSigningKey(key)
+				.build()
+				.parseClaimsJws(token)
+				.getBody()
+				.getExpiration();
+
+			return expiration.before(new Date());
+		} catch (ExpiredJwtException e) {
+			return true;
+		} catch (Exception e) {
+			log.error("토큰 만료 확인 중 오류 발생", e);
+			return false;
+		}
+	}
+
+	// 테스트용
+	public String createExpiredToken(String email) {
+		return Jwts.builder()
+			.setSubject(email)
+			.setExpiration(new Date(System.currentTimeMillis() - (7 * 24 * 60 * 60 * 2000L)))
+			.signWith(key, SignatureAlgorithm.HS256)
+			.compact();
+	}
 }
 
