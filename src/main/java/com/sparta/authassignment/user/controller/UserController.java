@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.sparta.authassignment.user.dto.SignUpRequestDto;
+import com.sparta.authassignment.user.dto.UserLoginRequest;
+import com.sparta.authassignment.user.dto.UserLoginResponse;
+import com.sparta.authassignment.user.dto.UserSignUpRequest;
 import com.sparta.authassignment.user.dto.UserGetResponse;
 import com.sparta.authassignment.user.dto.UserUpdateRequest;
 import com.sparta.authassignment.user.entity.User;
@@ -30,11 +32,22 @@ public class UserController {
 
 	@PostMapping("/sign-up")
 	public ResponseEntity<Void> signUp(
-		@RequestBody SignUpRequestDto requestDto
+		@RequestBody UserSignUpRequest requestDto
 	) {
 		userService.signUp(requestDto);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
+
+	@PostMapping("/login")
+	public ResponseEntity<UserLoginResponse> login(
+		@RequestBody UserLoginRequest request
+	){
+
+		UserLoginResponse response = userService.login(request);
+		return ResponseEntity.ok().header("Authorization", response.getAccessToken())
+			.body(response);
+	}
+
 
 	//TODO: 추후 email 기준으로 변경 할 예정
 

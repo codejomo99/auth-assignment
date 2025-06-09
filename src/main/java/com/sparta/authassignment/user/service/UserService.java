@@ -6,6 +6,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sparta.authassignment.common.exception.BaseException;
 import com.sparta.authassignment.common.exception.CommonErrorCode;
+import com.sparta.authassignment.security.jwt.JwtUtil;
+import com.sparta.authassignment.user.dto.UserLoginRequest;
+import com.sparta.authassignment.user.dto.UserLoginResponse;
 import com.sparta.authassignment.user.dto.UserSignUpRequest;
 import com.sparta.authassignment.user.dto.UserUpdateRequest;
 import com.sparta.authassignment.user.entity.User;
@@ -18,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final JwtUtil jwtUtil;
 
 	public void signUp(UserSignUpRequest requestDto) {
 
@@ -54,5 +58,17 @@ public class UserService {
 			new BaseException(CommonErrorCode.USER_NOT_EXISTS));
 
 		userRepository.deleteById(id);
+	}
+
+	public UserLoginResponse login(UserLoginRequest request) {
+		User user = userRepository.findByEmail(request.getEmail())
+			.orElseThrow(() -> new BaseException(CommonErrorCode.USER_NOT_EXISTS));
+
+		if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
+			throw new BaseException(CommonErrorCode.INVALID_CREDENTIALS);
+		}
+
+		String accessToken = jwtUtil.createToken(user.getEmail(), user.getUserRole());
+		return new UserLoginResponse(accessToken);
 	}
 }
