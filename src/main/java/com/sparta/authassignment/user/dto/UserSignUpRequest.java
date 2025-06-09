@@ -11,4 +11,5 @@ public class UserSignUpRequest {
 	private String email;
 	private String nickName;
 	private String password;
+	private String secretKey;
 }

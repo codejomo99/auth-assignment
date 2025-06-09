@@ -1,5 +1,6 @@
 package com.sparta.authassignment.user.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +13,7 @@ import com.sparta.authassignment.user.dto.UserLoginResponse;
 import com.sparta.authassignment.user.dto.UserSignUpRequest;
 import com.sparta.authassignment.user.dto.UserUpdateRequest;
 import com.sparta.authassignment.user.entity.User;
+import com.sparta.authassignment.user.entity.UserRole;
 import com.sparta.authassignment.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -23,10 +25,22 @@ public class UserService {
 	private final PasswordEncoder passwordEncoder;
 	private final JwtUtil jwtUtil;
 
+	@Value("${admin.signup.secret-key}")
+	private String adminSecretKey;
+
 	public void signUp(UserSignUpRequest requestDto) {
 
 		if (userRepository.findByEmail(requestDto.getEmail()).isPresent()) {
 			throw new BaseException(CommonErrorCode.USER_ALREADY_EXISTS);
+		}
+
+		UserRole role;
+		if (requestDto.getSecretKey() == null) {
+			role = UserRole.USER;
+		} else if (adminSecretKey.equals(requestDto.getSecretKey())) {
+			role = UserRole.ADMIN;
+		} else {
+			throw new BaseException(CommonErrorCode.ACCESS_DENIED_ADMIN);
 		}
 
 		String passwordEncode = passwordEncoder.encode(requestDto.getPassword());
@@ -35,6 +49,7 @@ public class UserService {
 			.email(requestDto.getEmail())
 			.password(passwordEncode)
 			.nickName(requestDto.getNickName())
+			.userRole(role)
 			.build());
 	}
 
