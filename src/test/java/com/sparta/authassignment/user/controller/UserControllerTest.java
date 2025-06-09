@@ -6,8 +6,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
@@ -33,23 +33,55 @@ class UserControllerTest {
 	@Autowired
 	private UserRepository userRepository;
 
+	@Value("${admin.signup.secret-key}")
+	private String adminSecretKey;
+
 	@BeforeEach
 	void cleanup() {
 		userRepository.deleteAll();
 	}
 
 	@Test
-	@DisplayName("회원가입이 성공했습니다.")
-	void signUp_Success() throws Exception {
+	@DisplayName("유저 회원가입이 성공했습니다.")
+	void signUp_User_Success() throws Exception {
 		// given
-		UserSignUpRequest request = new UserSignUpRequest("test@test.com", "nickname", "nickname");
+		UserSignUpRequest request = new UserSignUpRequest("test@test.com", "nickname", "nickname",adminSecretKey);
 		String json = objectMapper.writeValueAsString(request);
 
-		// when & then
+		// when-then
 		mockMvc.perform(post("/api/users/sign-up")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(json))
 			.andExpect(status().isCreated());  // 201
+	}
+
+	@Test
+	@DisplayName("관리자 회원가입이 성공했습니다.")
+	void signUp_Admin_Fail() throws Exception {
+		// given
+		UserSignUpRequest request = new UserSignUpRequest("test@test.com", "nickname", "nickname",null);
+		String json = objectMapper.writeValueAsString(request);
+
+		// when-the
+		mockMvc.perform(post("/api/users/sign-up")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(json))
+			.andExpect(status().isCreated());  // 201
+	}
+
+	@Test
+	@DisplayName("관리자 회원가입이 실패했습니다.")
+	void signUp_Admin_Success() throws Exception {
+
+		// given
+		UserSignUpRequest request = new UserSignUpRequest("test@test.com", "nickname", "nickname","secretKey");
+		String json = objectMapper.writeValueAsString(request);
+
+		// when-then
+		mockMvc.perform(post("/api/users/sign-up")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(json))
+			.andExpect(status().isForbidden());
 	}
 
 	@Test
@@ -59,7 +91,7 @@ class UserControllerTest {
 		mockMvc.perform(post("/api/users/sign-up")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(
-					new UserSignUpRequest("test@test.com", "nickname", "1234")
+					new UserSignUpRequest("test@test.com", "nickname", "1234",null)
 				)))
 			.andExpect(status().isCreated());
 
@@ -82,7 +114,7 @@ class UserControllerTest {
 		mockMvc.perform(post("/api/users/sign-up")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(
-					new UserSignUpRequest("test@test.com", "nickname", "1234")
+					new UserSignUpRequest("test@test.com", "nickname", "1234",null)
 				)))
 			.andExpect(status().isCreated());
 
