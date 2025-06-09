@@ -55,10 +55,16 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
 			log.info("JWT 토큰 추출 성공: {}", tokenValue);
 
+			if( (jwtUtil.isTokenExpired(tokenValue))){
+				log.error("JWT 토큰 만료 ㄷ");
+				throw new CustomAuthenticationException(CommonErrorCode.JWT_EXPIRED);
+			}
+
 			if (!jwtUtil.validateToken(tokenValue)) {
 				log.error("JWT 토큰 유효성 검증 실패");
 				throw new CustomAuthenticationException(CommonErrorCode.JWT_INVALID);
 			}
+
 
 			Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
 			log.info("토큰에서 추출한 이메일: {}", info.getSubject());
