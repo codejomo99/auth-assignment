@@ -6,7 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.sparta.authassignment.common.exception.BaseException;
 import com.sparta.authassignment.common.exception.CommonErrorCode;
-import com.sparta.authassignment.user.dto.SignUpRequestDto;
+import com.sparta.authassignment.user.dto.UserSignUpRequest;
 import com.sparta.authassignment.user.dto.UserUpdateRequest;
 import com.sparta.authassignment.user.entity.User;
 import com.sparta.authassignment.user.repository.UserRepository;
@@ -19,7 +19,7 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 
-	public void signUp(SignUpRequestDto requestDto) {
+	public void signUp(UserSignUpRequest requestDto) {
 
 		if (userRepository.findByEmail(requestDto.getEmail()).isPresent()) {
 			throw new BaseException(CommonErrorCode.USER_ALREADY_EXISTS);
