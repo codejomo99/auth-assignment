@@ -21,11 +21,17 @@ public class GlobalExceptionHandler {
 	@Getter
 	@AllArgsConstructor
 	private static class ErrorResponse {
-		private final String errorCode;
-		private final String message;
+		private final ErrorDetail error;
 
 		static ErrorResponse of(String errorCode, String message) {
-			return new ErrorResponse(errorCode, message);
+			return new ErrorResponse(new ErrorDetail(errorCode,message));
 		}
+	}
+
+	@Getter
+	@AllArgsConstructor
+	private static class ErrorDetail {
+		private final String code;
+		private final String message;
 	}
 }
