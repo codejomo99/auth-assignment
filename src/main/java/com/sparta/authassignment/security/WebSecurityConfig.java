@@ -1,4 +1,4 @@
-package com.sparta.authassignment.config;
+package com.sparta.authassignment.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
