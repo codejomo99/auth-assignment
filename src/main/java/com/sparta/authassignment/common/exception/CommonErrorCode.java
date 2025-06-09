@@ -18,7 +18,10 @@ public enum CommonErrorCode implements BaseErrorCode {
 	INVALID_CREDENTIALS("INVALID_CREDENTIALS", "아이디 또는 비밀번호가 올바르지 않습니다.", HttpStatus.UNAUTHORIZED), //
 
 	// 인증은 되었지만 권한이 없는 경우
-	ACCESS_DENIED("ACCESS_DENIED", "접근 권한이 없습니다.", HttpStatus.FORBIDDEN), //
+	ACCESS_DENIED("ACCESS_DENIED", "접근 권한이 없습니다.", HttpStatus.FORBIDDEN),
+
+	// 관리자 가입 실패
+	ACCESS_DENIED_ADMIN("ACCESS_DENIED_ADMIN","관리자 가입에 실패했습니다.", HttpStatus.FORBIDDEN)
 
 	;
 
