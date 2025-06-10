@@ -40,7 +40,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 		String requestURI = req.getRequestURI();
 
 		// 인증 필요 없는 URL은 JWT 필터 패스
-		if (requestURI.startsWith("/signup") || requestURI.startsWith("/login") || requestURI.startsWith("/h2-console")) {
+		if (requestURI.startsWith("/signup") ||
+			requestURI.startsWith("/login") ||
+			requestURI.startsWith("/h2-console") ||
+			requestURI.startsWith("/swagger-ui") ||
+			requestURI.startsWith("/v3/api-docs")) {
+
 			filterChain.doFilter(req, res);
 			return;
 		}

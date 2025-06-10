@@ -59,7 +59,10 @@ public class WebSecurityConfig {
 				.requestMatchers(
 					"/h2-console/**",
 					"/signup",
-					"/login"
+					"/login",
+					"/v3/api-docs/**",
+					"/swagger-ui/**",
+					"/swagger-ui.html"
 				).permitAll()
 				.requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
 				.anyRequest().authenticated()

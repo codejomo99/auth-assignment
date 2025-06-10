@@ -29,3 +29,13 @@ spring:
 admin:
   signup:
     secret-key: ${ADMIN_SIGNUP_SECRET}
+
+springdoc:
+  enable-native-support: true
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    use-root-path: true
