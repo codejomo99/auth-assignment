@@ -30,7 +30,7 @@ public class UserService {
 
 	public void signUp(UserSignUpRequest requestDto) {
 
-		if (userRepository.findByEmail(requestDto.getEmail()).isPresent()) {
+		if (userRepository.findByUsername(requestDto.getUsername()).isPresent()) {
 			throw new BaseException(CommonErrorCode.USER_ALREADY_EXISTS);
 		}
 
@@ -46,7 +46,6 @@ public class UserService {
 		String passwordEncode = passwordEncoder.encode(requestDto.getPassword());
 
 		userRepository.save(User.builder()
-			.email(requestDto.getEmail())
 			.password(passwordEncode)
 			.username(requestDto.getUsername())
 			.nickName(requestDto.getNickName())
@@ -77,14 +76,14 @@ public class UserService {
 	}
 
 	public UserLoginResponse login(UserLoginRequest request) {
-		User user = userRepository.findByEmail(request.getEmail())
+		User user = userRepository.findByUsername(request.getUsername())
 			.orElseThrow(() -> new BaseException(CommonErrorCode.USER_NOT_EXISTS));
 
 		if(!passwordEncoder.matches(request.getPassword(), user.getPassword())){
 			throw new BaseException(CommonErrorCode.INVALID_CREDENTIALS);
 		}
 
-		String accessToken = jwtUtil.createToken(user.getEmail(), user.getUserRole());
+		String accessToken = jwtUtil.createToken(user.getUsername(), user.getUserRole());
 		return new UserLoginResponse(accessToken);
 	}
 }

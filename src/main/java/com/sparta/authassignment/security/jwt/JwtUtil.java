@@ -48,12 +48,12 @@ public class JwtUtil {
 	}
 
 	// 토큰 생성
-	public String createToken(String email, UserRole role) {
+	public String createToken(String username, UserRole role) {
 		Date date = new Date();
 
 		return BEARER_PREFIX +
 			Jwts.builder()
-				.setSubject(email)
+				.setSubject(username)
 				.claim(AUTHORIZATION_KEY, role.name())
 				.setExpiration(new Date(date.getTime() + TOKEN_TIME))
 				.setIssuedAt(date)

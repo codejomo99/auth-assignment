@@ -11,12 +11,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class UserGetResponse {
-	private String email;
+	private String username;
 	private String nickName;
 	private UserRole role;
 
 	public UserGetResponse(User user) {
-		this.email = user.getEmail();
+		this.username = user.getUsername();
 		this.nickName = user.getNickName();
 		this.role = user.getUserRole();
 	}

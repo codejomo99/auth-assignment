@@ -83,22 +83,22 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 	}
 
 	// 인증 처리
-	public void setAuthentication(String email) {
-		UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+	public void setAuthentication(String username) {
+		UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-		log.info("인증 객체 생성 성공 - 사용자: {}", email);
+		log.info("인증 객체 생성 성공 - 사용자: {}", username);
 		log.info("사용자 권한 목록: {}", userDetails.getAuthorities());
 
 		SecurityContext context = SecurityContextHolder.createEmptyContext();
-		Authentication authentication = createAuthentication(email);
+		Authentication authentication = createAuthentication(username);
 		context.setAuthentication(authentication);
 
 		SecurityContextHolder.setContext(context);
 	}
 
 	// 인증 객체 생성
-	private Authentication createAuthentication(String email) {
-		UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+	private Authentication createAuthentication(String username) {
+		UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 		return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 	}
 }

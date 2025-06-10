@@ -27,7 +27,7 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
 
-	@Column(nullable = false)
+	@Column(name = "username", nullable = false, unique = true)
 	private String username;
 
 	@Column(nullable = false)
@@ -36,8 +36,6 @@ public class User {
 	@Column(name = "password", nullable = false)
 	private String password;
 
-	@Column(name = "email", nullable = false, unique = true)
-	private String email;
 
 	@Builder.Default
 	@Enumerated(EnumType.STRING)

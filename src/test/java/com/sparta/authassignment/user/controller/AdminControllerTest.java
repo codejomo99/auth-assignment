@@ -59,16 +59,16 @@ class AdminControllerTest {
             .username("admin")
             .nickName("관리자")
             .password(passwordEncoder.encode("1234"))
-            .email("admin@example.com")
+            // .email("admin@example.com")
             .userRole(UserRole.ADMIN)
             .build();
         userRepository.save(user);
 
         User user1 = User.builder()
-            .username("user")
+            .username("username")
             .nickName("유저")
             .password(passwordEncoder.encode("1234"))
-            .email("user@example.com")
+            // .email("user@example.com")
             .userRole(UserRole.USER)
             .build();
         userRepository.save(user1);
@@ -88,7 +88,7 @@ class AdminControllerTest {
         Long userId = user.getId();
 
         String loginRequestJson = objectMapper.writeValueAsString(Map.of(
-            "email", "admin@example.com",
+            "username", "admin",
             "password", "1234"
         ));
 
@@ -123,7 +123,7 @@ class AdminControllerTest {
         Long userId = user.getId();
 
         String loginRequestJson = objectMapper.writeValueAsString(Map.of(
-            "email", "user@example.com",
+            "username", "username",
             "password", "1234"
         ));
 
@@ -156,7 +156,7 @@ class AdminControllerTest {
         Long userId = user.getId();
 
         String loginRequestJson = objectMapper.writeValueAsString(Map.of(
-            "email", "admin@example.com",
+            "username", "username",
             "password", "1234"
         ));
 
@@ -201,7 +201,7 @@ class AdminControllerTest {
 
         User user = userRepository.findAll().get(0);
         Long userId = user.getId();
-        String expiredToken = jwtUtil.createExpiredToken(user.getEmail());
+        String expiredToken = jwtUtil.createExpiredToken(user.getUsername());
 
         // mock 응답 설정
         AdminRolePatchResponse mockResponse = new AdminRolePatchResponse(user);

@@ -44,7 +44,7 @@ class UserControllerTest {
 	@DisplayName("유저 회원가입이 성공했습니다.")
 	void signUp_User_Success() throws Exception {
 		// given
-		UserSignUpRequest request = new UserSignUpRequest("test@test.com", "username", "nickname", "1234",
+		UserSignUpRequest request = new UserSignUpRequest( "username", "nickname", "1234",
 			adminSecretKey);
 		String json = objectMapper.writeValueAsString(request);
 
@@ -59,7 +59,7 @@ class UserControllerTest {
 	@DisplayName("관리자 회원가입이 성공했습니다.")
 	void signUp_Admin_Fail() throws Exception {
 		// given
-		UserSignUpRequest request = new UserSignUpRequest("test@test.com", "username", "nickname", "1234", adminSecretKey);
+		UserSignUpRequest request = new UserSignUpRequest("username", "nickname", "1234", adminSecretKey);
 		String json = objectMapper.writeValueAsString(request);
 
 		// when-the
@@ -74,7 +74,7 @@ class UserControllerTest {
 	void signUp_Admin_Success() throws Exception {
 
 		// given
-		UserSignUpRequest request = new UserSignUpRequest("test@test.com", "username", "nickname", "1234",
+		UserSignUpRequest request = new UserSignUpRequest( "username", "nickname", "1234",
 			"secretKey");
 		String json = objectMapper.writeValueAsString(request);
 
@@ -92,12 +92,12 @@ class UserControllerTest {
 		mockMvc.perform(post("/signup")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(
-					new UserSignUpRequest("test@test.com", "username", "nickname", "1234", null)
+					new UserSignUpRequest("username", "1234", "nickname", null)
 				)))
 			.andExpect(status().isCreated());
 
 		// 로그인 요청
-		UserLoginRequest loginDto = new UserLoginRequest("test@test.com", "1234");
+		UserLoginRequest loginDto = new UserLoginRequest("username", "1234");
 		String loginBody = objectMapper.writeValueAsString(loginDto);
 
 		mockMvc.perform(post("/login")
@@ -115,12 +115,12 @@ class UserControllerTest {
 		mockMvc.perform(post("/signup")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(
-					new UserSignUpRequest("test@test.com", "username", "nickname", "1234", null)
+					new UserSignUpRequest("username", "nickname", "1234", null)
 				)))
 			.andExpect(status().isCreated());
 
 		// 잘못된 비밀번호로 로그인 시도
-		UserLoginRequest wrongLogin = new UserLoginRequest("test@test.com", "1235");
+		UserLoginRequest wrongLogin = new UserLoginRequest("username", "1235");
 		String wrongJson = objectMapper.writeValueAsString(wrongLogin);
 
 		mockMvc.perform(post("/login")
