@@ -24,6 +24,8 @@ import com.sparta.authassignment.user.entity.User;
 import com.sparta.authassignment.user.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -73,7 +75,19 @@ public class UserController {
 	}
 
 	@Operation(summary = "회원 정보 수정", description = "인증된 사용자의 정보를 수정합니다.")
-	@ApiResponse(responseCode = "200", description = "수정 완료 메시지 반환")
+	@ApiResponse(
+		responseCode = "200",
+		description  = "수정 완료 메시지 반환",
+		content = @Content(
+			mediaType = "application/json",
+			examples = {
+				@ExampleObject(
+					name  = "SuccessResponse",
+					value = "{\"message\":\"사용자 정보가 수정되었습니다.\"}"
+				)
+			}
+		)
+	)
 	@PutMapping("/api/users")
 	public ResponseEntity<Map<String, String>> updateUser(
 		@AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -84,7 +98,19 @@ public class UserController {
 	}
 
 	@Operation(summary = "회원 탈퇴", description = "인증된 사용자의 계정을 삭제합니다.")
-	@ApiResponse(responseCode = "200", description = "삭제 완료 메시지 반환")
+	@ApiResponse(
+		responseCode = "200",
+		description  = "삭제 완료 메시지 반환",
+		content = @Content(
+			mediaType = "application/json",
+			examples = {
+				@ExampleObject(
+					name  = "SuccessResponse",
+					value = "{\"message\":\"사용자 정보가 삭제되었습니다.\"}"
+				)
+			}
+		)
+	)
 	@DeleteMapping("/api/users")
 	public ResponseEntity<Map<String, String>> deleteUser(
 		@AuthenticationPrincipal UserDetailsImpl userDetails
