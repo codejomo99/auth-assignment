@@ -1,0 +1,48 @@
+name: EC2에 Spring Boot 자동 배포
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📦 소스코드 체크아웃
+        uses: actions/checkout@v3
+
+      - name: 🔐 SSH 설정
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: 🚀 EC2 서버로 배포 시작
+        run: |
+            ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+              set -e
+              cd ~/auth-assignment
+            
+              echo "[1단계] 최신 코드 가져오는 중..."
+              git pull origin main
+            
+              echo "[2단계] .env 환경변수 파일 생성 중..."
+              echo "SPRING_DATASOURCE_URL=${{ secrets.ENV_SPRING_DATASOURCE_URL }}" > .env
+              echo "SPRING_DATASOURCE_USERNAME=${{ secrets.ENV_SPRING_DATASOURCE_USERNAME }}" >> .env
+              echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.ENV_SPRING_DATASOURCE_PASSWORD }}" >> .env
+              echo "SECRET_KEY=${{ secrets.ENV_SECRET_KEY }}" >> .env
+              echo "ADMIN_SIGNUP_SECRET=${{ secrets.ENV_ADMIN_SIGNUP_SECRET }}" >> .env
+            
+              echo "[3단계] 프로젝트 빌드 중..."
+              ./gradlew build -x test
+            
+              echo "[4단계] 기존 애플리케이션 종료 중..."
+              pkill -f 'java -jar' || echo "이전 프로세스가 없습니다."
+            
+              echo "[5단계] 새 애플리케이션 실행 중..."
+              nohup java -jar build/libs/*.jar --spring.config.import=optional:env:.env > app.log 2>&1 &
+            
+              echo "배포 완료! 앱이 정상적으로 실행 중입니다."
+          EOF
