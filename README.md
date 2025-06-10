@@ -1,17 +1,20 @@
 # Spring Boot 백엔드 과제
 
-Spring Boot 기반으로 **JWT 인증 및 인가**, **역할 기반 접근 제어**, **Swagger UI 문서화**, **JUnit 테스트**, **GitHub Actions 기반 CI/CD**, **AWS EC2 배포**까지 구현한 백엔드 과제입니다.
+Spring Boot 기반으로 **JWT 인증 및 인가**, **역할 기반 접근 제어**, **Swagger UI 문서화**, **JUnit 테스트**, <br>
+**GitHub Actions 기반 CI/CD**, **AWS EC2 배포**까지 구현한 백엔드 과제입니다.
 
-## 📚 요구사항 기능
--[x] JWT 기반 회원가입 / 로그인 / 권한 부여 API 개발
--[x] 역할(Role) 기반 관리자 접근 제어
--[x] Swagger UI를 통한 API 문서화
--[x] JUnit 기반 테스트 작성
--[x] AWS EC2 배포 및 Nginx 리버스 프록시 구성
+## ✅ 구현 완료 항목
+
+- [x] **JWT 기반 회원가입 / 로그인 / 권한 부여 API 개발**
+- [x] **역할(Role) 기반 관리자 접근 제어**
+- [x] **Swagger UI를 통한 API 문서화**
+- [x] **JUnit 기반 테스트 작성**
+- [x] **AWS EC2 배포 및 Nginx 리버스 프록시 구성**
 
 ## ➕ 추가 기능
--[x] 유저 CRUD
--[x] GiHub Actions 기반 CI/CD 자동화
+
+- [x] 유저 CRUD
+- [x] **GitHub Actions 기반 CI/CD 자동화 파이프라인 구성**
 
 
 
@@ -19,14 +22,15 @@ Spring Boot 기반으로 **JWT 인증 및 인가**, **역할 기반 접근 제�
 
 ## 🛠 기술 스택
 
-- Java 17
-- Spring Boot 3
-- Spring Security + JWT
-- Swagger (springdoc-openapi)
-- H2
-- JUnit 5
-- Gradle
-- AWS EC2 (Amazon Linux 2023)
+- **Java 17**
+- **Spring Boot 3**
+- **Spring Security + JWT**
+- **Swagger (springdoc-openapi)**
+- **JUnit 5**
+- **Gradle**
+- **H2 (개발용 인메모리 DB)**
+- **AWS EC2 (Amazon Linux 2023)**
+- **Nginx (리버스 프록시)**
 
 
 ## 🔐 주요 API
