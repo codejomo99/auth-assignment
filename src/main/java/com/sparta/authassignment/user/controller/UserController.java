@@ -23,6 +23,7 @@ import com.sparta.authassignment.user.dto.UserUpdateRequest;
 import com.sparta.authassignment.user.entity.User;
 import com.sparta.authassignment.user.service.UserService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -32,7 +33,7 @@ public class UserController {
 
 	@PostMapping("/signup")
 	public ResponseEntity<Void> signUp(
-		@RequestBody UserSignUpRequest requestDto
+		@RequestBody @Valid UserSignUpRequest requestDto
 	) {
 		userService.signUp(requestDto);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -40,7 +41,7 @@ public class UserController {
 
 	@PostMapping("/login")
 	public ResponseEntity<UserLoginResponse> login(
-		@RequestBody UserLoginRequest request
+		@RequestBody @Valid UserLoginRequest request
 	){
 
 		UserLoginResponse response = userService.login(request);
