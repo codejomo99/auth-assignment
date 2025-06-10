@@ -1,6 +1,7 @@
 package com.sparta.authassignment.common.exception;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -16,6 +17,14 @@ public class GlobalExceptionHandler {
 		return ResponseEntity
 			.status(errorCode.getStatus())
 			.body(ErrorResponse.of(errorCode.getErrorCode(), errorCode.getMessage()));
+	}
+
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<?> handleValidationException(MethodArgumentNotValidException e) {
+		String errorMessage = e.getBindingResult().getFieldError().getDefaultMessage();
+		return ResponseEntity
+			.badRequest()
+			.body(ErrorResponse.of("VALIDATION_ERROR", errorMessage));
 	}
 
 	@Getter
