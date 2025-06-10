@@ -1,29 +1,38 @@
 package com.sparta.authassignment.user.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Schema(name = "UserSignUpRequest", description = "회원가입 요청 DTO")
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserSignUpRequest {
 
+	@Schema(description = "이메일 (필수)", example = "admin@example.com")
 	@NotBlank(message = "이메일은 필수입니다.")
 	@Email(message = "유효한 이메일 형식이 아닙니다.")
 	private String email;
 
-	@NotBlank(message = "아이디는 필수입니다.")
+	@Schema(description = "유저 이름 (필수)", example = "username")
+	@NotBlank(message = "유저이름은 필수입니다.")
 	private String username;
 
+	@Schema(description = "닉네임 (필수)", example = "nickname")
 	@NotBlank(message = "닉네임은 필수입니다.")
 	private String nickName;
 
+	@Schema(description = "비밀번호 (필수)", example = "1234")
 	@NotBlank(message = "비밀번호는 필수입니다.")
 	private String password;
 
-	// 선택값: 관리자 등록 시 사용, 없으면 일반 유저로 가입됨
+	@Schema(
+		description = "선택값: 관리자 등록 시 사용. 없으면 일반 사용자로 가입됩니다.",
+		example = "eA9!QyU3VzRvNldXp2^Wr8Lt%ZqK@Cm"
+	)
 	private String secretKey;
 }
