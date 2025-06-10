@@ -11,6 +11,7 @@ import com.sparta.authassignment.security.jwt.JwtUtil;
 import com.sparta.authassignment.user.dto.UserLoginRequest;
 import com.sparta.authassignment.user.dto.UserLoginResponse;
 import com.sparta.authassignment.user.dto.UserSignUpRequest;
+import com.sparta.authassignment.user.dto.UserSignUpResponse;
 import com.sparta.authassignment.user.dto.UserUpdateRequest;
 import com.sparta.authassignment.user.entity.User;
 import com.sparta.authassignment.user.entity.UserRole;
@@ -28,7 +29,7 @@ public class UserService {
 	@Value("${admin.signup.secret-key}")
 	private String adminSecretKey;
 
-	public void signUp(UserSignUpRequest requestDto) {
+	public UserSignUpResponse signUp(UserSignUpRequest requestDto) {
 
 		if (userRepository.findByUsername(requestDto.getUsername()).isPresent()) {
 			throw new BaseException(CommonErrorCode.USER_ALREADY_EXISTS);
@@ -45,12 +46,14 @@ public class UserService {
 
 		String passwordEncode = passwordEncoder.encode(requestDto.getPassword());
 
-		userRepository.save(User.builder()
+		User user = userRepository.save(User.builder()
 			.password(passwordEncode)
 			.username(requestDto.getUsername())
 			.nickName(requestDto.getNickName())
 			.userRole(role)
 			.build());
+
+		return new UserSignUpResponse(user);
 	}
 
 	@Transactional(readOnly = true)

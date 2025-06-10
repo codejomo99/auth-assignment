@@ -18,6 +18,7 @@ import com.sparta.authassignment.user.dto.UserGetResponse;
 import com.sparta.authassignment.user.dto.UserLoginRequest;
 import com.sparta.authassignment.user.dto.UserLoginResponse;
 import com.sparta.authassignment.user.dto.UserSignUpRequest;
+import com.sparta.authassignment.user.dto.UserSignUpResponse;
 import com.sparta.authassignment.user.dto.UserUpdateRequest;
 import com.sparta.authassignment.user.entity.User;
 import com.sparta.authassignment.user.service.UserService;
@@ -41,11 +42,11 @@ public class UserController {
 	)
 	@ApiResponse(responseCode = "201", description = "회원가입 성공")
 	@PostMapping("/signup")
-	public ResponseEntity<Void> signUp(
+	public ResponseEntity<UserSignUpResponse> signUp(
 		@RequestBody @Valid UserSignUpRequest requestDto
 	) {
-		userService.signUp(requestDto);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+		UserSignUpResponse response = userService.signUp(requestDto);
+		return ResponseEntity.ok(response);
 	}
 
 	@Operation(summary = "로그인", description = "이메일과 비밀번호로 로그인합니다.")
