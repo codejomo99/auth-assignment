@@ -5,19 +5,20 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sparta.authassignment.security.UserDetailsImpl;
+import com.sparta.authassignment.user.dto.UserGetResponse;
 import com.sparta.authassignment.user.dto.UserLoginRequest;
 import com.sparta.authassignment.user.dto.UserLoginResponse;
 import com.sparta.authassignment.user.dto.UserSignUpRequest;
-import com.sparta.authassignment.user.dto.UserGetResponse;
 import com.sparta.authassignment.user.dto.UserUpdateRequest;
 import com.sparta.authassignment.user.entity.User;
 import com.sparta.authassignment.user.service.UserService;
@@ -48,28 +49,29 @@ public class UserController {
 	}
 
 
-	//TODO: 추후 email 기준으로 변경 할 예정
-
-	@GetMapping("/{id}")
+	@GetMapping("/api/users")
 	public ResponseEntity<UserGetResponse> getUser(
-		@PathVariable Long id
+		@AuthenticationPrincipal UserDetailsImpl userDetails
 	) {
-		User user = userService.getUser(id);
+		User user = userService.getUser(userDetails.getUser().getId());
 		UserGetResponse response = new UserGetResponse(user);
 		return ResponseEntity.ok(response);
 	}
 
-	@PutMapping("/{id}")
-	public ResponseEntity<Map<String, String>> updateUser(@PathVariable Long id,
+	@PutMapping("/api/users")
+	public ResponseEntity<Map<String, String>> updateUser(
+		@AuthenticationPrincipal UserDetailsImpl userDetails,
 		@RequestBody UserUpdateRequest userUpdateRequest){
 
-		userService.updateUser(id,userUpdateRequest);
+		userService.updateUser(userDetails.getUser().getId(), userUpdateRequest);
 		return ResponseEntity.ok(Collections.singletonMap("message", "사용자 정보가 수정 되었습니다."));
 	}
 
-	@DeleteMapping("/{id}")
-	public ResponseEntity<Map<String, String>> deleteUser(@PathVariable Long id){
-		userService.deleteUser(id);
+	@DeleteMapping("/api/users")
+	public ResponseEntity<Map<String, String>> deleteUser(
+		@AuthenticationPrincipal UserDetailsImpl userDetails
+	){
+		userService.deleteUser(userDetails.getUser().getId());
 		return ResponseEntity.ok(Collections.singletonMap("message", "사용자 정보가 삭제 되었습니다."));
 	}
 
