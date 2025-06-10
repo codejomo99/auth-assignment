@@ -39,20 +39,25 @@ jobs:
         run: |
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
             set -e
-            cd ~
 
             echo "[1단계] .env 파일 생성"
-            echo "SPRING_DATASOURCE_URL=${{ secrets.ENV_SPRING_DATASOURCE_URL }}" > .env
-            echo "SPRING_DATASOURCE_USERNAME=${{ secrets.ENV_SPRING_DATASOURCE_USERNAME }}" >> .env
-            echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.ENV_SPRING_DATASOURCE_PASSWORD }}" >> .env
-            echo "SECRET_KEY=${{ secrets.ENV_SECRET_KEY }}" >> .env
-            echo "ADMIN_SIGNUP_SECRET=${{ secrets.ENV_ADMIN_SIGNUP_SECRET }}" >> .env
+            echo "SPRING_DATASOURCE_URL=${{ secrets.ENV_SPRING_DATASOURCE_URL }}" > ~/.env
+            echo "SPRING_DATASOURCE_USERNAME=${{ secrets.ENV_SPRING_DATASOURCE_USERNAME }}" >> ~/.env
+            echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.ENV_SPRING_DATASOURCE_PASSWORD }}" >> ~/.env
+            echo "SECRET_KEY=${{ secrets.ENV_SECRET_KEY }}" >> ~/.env
+            echo "ADMIN_SIGNUP_SECRET=${{ secrets.ENV_ADMIN_SIGNUP_SECRET }}" >> ~/.env
 
-            echo "[2단계] 기존 앱 종료"
+            echo "[2단계] 환경변수 export"
+            set -a
+            source ~/.env
+            set +a
+
+            echo "[3단계] 기존 앱 종료"
             pkill -f 'java -jar' || echo "기존 프로세스 없음"
 
-            echo "[3단계] 새 앱 실행"
-            nohup java -jar app.jar --spring.config.import=optional:env:.env > app.log 2>&1 &
+            echo "[4단계] 앱 실행"
+            cd ~/app.jar
+            nohup java -jar auth-assignment-0.0.1-SNAPSHOT.jar > app.log 2>&1 &
 
             echo "🎉 배포 완료!"
           EOF
