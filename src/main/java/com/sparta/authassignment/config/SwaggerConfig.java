@@ -31,8 +31,8 @@ public class SwaggerConfig {
 					.name("Apache 2.0")
 					.url("http://www.apache.org/licenses/LICENSE-2.0.html")))
 			.servers(List.of(
-				new Server().url("http://localhost:8080").description("로컬"),
-				new Server().url("http://localhost:8080").description("배포 서버")
+				new Server().url("http://54.180.88.6").description("배포 서버"),
+				new Server().url("http://localhost:8080").description("로컬")
 			))
 			.components(new Components()
 				.addSecuritySchemes("bearerAuth",
